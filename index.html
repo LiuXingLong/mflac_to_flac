@@ -1,0 +1,134 @@
+<html lang="zh-CN">
+<merlin-component id="merlin-text-summarizer" class="merlin text-summarizer"></merlin-component>
+<merlin-component id="merlin-preview-link" class="merlin merlin-preview-link"></merlin-component>
+<merlin-component id="merlin-context-btn" class="merlin context-btn"></merlin-component>
+<merlin-component id="merlin-chat" class="merlin chat"></merlin-component>
+<head>
+    <script src="./js/hm.js"></script><script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "./js/hm.js";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MFLAC转FLAC</title>
+    <meta name="keywords" content="MFLAC, MFLAC转FLAC, MFLAC批量在线转换, MFLAC文件怎么转换FLAC">
+    <meta name="description" content="MFLAC文件怎么转换FLAC 本站提供在线音乐格式转换，浏览器本地转换，无需上传，可将MFLAC批量在线转换为FLAC，支持预览、下载等功能">
+    <meta name="csrf-param" content="_csrf">
+    <meta name="csrf-token" content="CpGEmrzYgCVNWJvDZDa-OFpRyNLmOocO5BzOPWstqDVd2Lz3iq7WehI9yZRTYt8AEBeKpr5oqjqUb4x5XB3FVA==">
+    <link href="./css/bootstrap.css" rel="stylesheet">
+    <link href="./css/site.css" rel="stylesheet">
+    <script src="./js/jquery.js"></script>
+    <script src="./js/yii.js"></script>      
+</head>
+<body>
+<div class="wrap">
+    <nav id="w0" class="navbar-default navbar-fixed-top navbar">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#w0-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/" previewlistener="true">开源云音乐</a>
+            </div>
+            <div id="w0-collapse" class="collapse navbar-collapse">
+                <ul id="w1" class="navbar-nav navbar-right nav"></ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <script>
+            var funcky_key = "key";
+        </script>
+
+        <div class="site-index" id="site-index">
+            <div class="welcom-title">
+                <h1>mflac转flac</h1>
+                <p>浏览器本地转换无需上传速度飞快</p>
+            </div>
+            <div class="body-content">
+                <div id="convert-button-container">
+            <span class="btn btn-primary fileinput-button">
+                <i class="glyphicon glyphicon-plus"></i>
+                <span class="fileinput-btn-span">选择文件开始转换(支持多选)</span>
+                <input id="upload" type="file" name="files[]" accept=".ncm,.uc,.kwm,.xm,.wav,.mp3,.flac,.m4a,.ogg,.tm0,.tm3,.qmc3,.qmc2,.qmc0,.qmcflac,.qmcogg,.tkm,.bkcmp3,.bkcm4a,.bkcflac,.bkcwav,.bkcape,.bkcogg,.bkcwma,.mggl,.mflac,.mflac0,.mgg,.mgg1,.mgg0,.666c6163,.6d7033,.6f6767,.6d3461,.776176,.tm2,.tm6,.cache,.vpr,.kgm,.kgma" multiple="">
+            </span>
+                </div>
+                <div id="download-all-btn-container" style="visibility:hidden;">
+                    <!-- <div>
+                        <img width="200px" data-src="./img/AlipayCollection_v1.1.jpg" src="./img/AlipayCollection_v1.1.jpg">
+                    </div>
+                    <div>
+                        <span>如果您觉得好用，请考虑打赏一下😊 </span>
+                    </div> -->
+                    <button onclick="downloadAll()" type="button" class="btn btn-success">
+                        <i class="glyphicon glyphicon-download"></i>
+                        <span>下载全部</span>
+                    </button>
+                    <button onclick="downloadZip()" type="button" class="btn btn-success">
+                        <i class="glyphicon glyphicon-download"></i>
+                        <span>生成ZIP</span>
+                    </button>
+                    <button onclick="deletedAll()" type="button" class="btn btn-danger delete">
+                        <i class="glyphicon glyphicon-trash"></i>
+                        <span>删除全部</span>
+                    </button>
+                    <div id="zip-status">
+                    </div>
+                </div>
+                <table id="res-table" class="table table-striped">
+                </table>
+                <div>
+                </div>
+            </div>
+        </div>
+        <script src="./js/metaflac.js"></script>
+        <script src="./js/jsmediatags.min.js"></script>
+        <script src="./js/decrypt.js"></script>
+        <script src="./js/aes.js"></script>
+        <script src="./js/zip.js"></script>
+        <script src="./js/id3.js"></script>
+        <script src="./js/script.js"></script>
+        <script>
+            $(document).ready(function(){
+                $("#page-loading").fadeOut(1500, function(){
+                    var pageLoadingDiv = document.getElementById("page-loading");
+                    pageLoadingDiv.parentNode.removeChild(pageLoadingDiv);
+                });
+                if (typeof checkBrowser === "function") {
+                    checkBrowser();
+                    document.getElementById('upload').addEventListener('change', handleFileSelect, false);
+                } else {
+                    var div = document.createElement("div");
+                    div.id = "may-not-work-container"
+                    div.className = 'alert alert-warning';
+                    div.insertAdjacentHTML('beforeend', "<strong>提示：</strong> 您的浏览器可能不能使用本站功能，请尝试电脑端最新版Chrome或者Firefox等浏览器。");
+                    $("#site-index").append(div);
+                }
+            });
+        </script>
+    </div>
+</div>
+<footer class="footer-container">
+    <div align="center" class="footer-info">
+        <span>云音乐文件格式</span>
+    </div>
+    <div class="footer-copyright">
+        <div class="container">
+            <p class="pull-left"></p>
+            <p class="pull-right"></p>
+        </div>
+    </div>
+</footer>
+
+<script src="./js/bootstrap.js"></script>
+
+</body></html>
